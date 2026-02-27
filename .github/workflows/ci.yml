@@ -11,7 +11,22 @@ jobs:
     runs-on: ubuntu-latest
     defaults:
       run:
-        working-directory: backend
+        working-directory: Narco
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: narco
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
@@ -29,31 +44,62 @@ jobs:
         run: ./mvnw test
 
 
-  frontend-e2e:
+  e2e:
     runs-on: ubuntu-latest
     needs: backend
-    defaults:
-      run:
-        working-directory: frontend
+
+    services:
+      postgres:
+        image: postgres:15
+        env:
+          POSTGRES_DB: narco
+          POSTGRES_USER: postgres
+          POSTGRES_PASSWORD: postgres
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd pg_isready
+          --health-interval 10s
+          --health-timeout 5s
+          --health-retries 5
 
     steps:
       - uses: actions/checkout@v4
+
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
 
       - name: Setup Node
         uses: actions/setup-node@v4
         with:
           node-version: 20
 
-      - name: Install dependencies
+      - name: Install Angular dependencies
+        working-directory: Angular_Narco
         run: npm ci
 
       - name: Install Chrome
         uses: browser-actions/setup-chrome@v1
 
-      - name: Start Angular app
+      - name: Make mvnw executable
+        working-directory: Narco
+        run: chmod +x mvnw
+
+      - name: Start backend
+        working-directory: Narco
+        run: |
+          ./mvnw spring-boot:run &
+          sleep 45
+
+      - name: Start Angular
+        working-directory: Angular_Narco
         run: |
           npm start &
-          sleep 20
+          sleep 30
 
-      - name: Run Selenium E2E tests
+      - name: Run Selenium e2e tests
+        working-directory: Angular_Narco
         run: npm run e2e
