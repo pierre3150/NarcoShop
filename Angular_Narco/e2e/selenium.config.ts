@@ -5,9 +5,11 @@ import * as path from 'path';
 
 export const BASE_URL = 'http://localhost:4200';
 
+const isWindows = process.platform === 'win32';
+const chromedriverBin = isWindows ? 'chromedriver.exe' : 'chromedriver';
 const chromedriverPath = path.join(
   process.cwd(),
-  'node_modules', 'chromedriver', 'lib', 'chromedriver', 'chromedriver.exe'
+  'node_modules', 'chromedriver', 'lib', 'chromedriver', chromedriverBin
 );
 
 let sharedDriver: WebDriver | null = null;
@@ -24,6 +26,9 @@ export async function getDriver(): Promise<WebDriver> {
     log('🚀 Ouverture de Chrome (une seule fois pour toute la suite)');
 
     const options = new chrome.Options();
+    if (!isWindows) {
+      options.addArguments('--headless=new');
+    }
     options.addArguments('--no-sandbox');
     options.addArguments('--disable-dev-shm-usage');
     options.addArguments('--disable-gpu');

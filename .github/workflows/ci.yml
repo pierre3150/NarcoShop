@@ -83,8 +83,9 @@ jobs:
         working-directory: Angular_Narco
         run: npm ci
 
-      - name: Install Chrome
-        uses: browser-actions/setup-chrome@v1
+      - name: Make chromedriver executable
+        working-directory: Angular_Narco
+        run: chmod +x node_modules/chromedriver/lib/chromedriver/chromedriver
 
       - name: Make mvnw executable
         working-directory: Narco
