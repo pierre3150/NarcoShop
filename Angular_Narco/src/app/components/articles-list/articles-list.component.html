@@ -1,0 +1,89 @@
+﻿<div class="articles-container">
+  
+  <header class="page-header">
+    <h1 class="page-title">Tous les Articles Disponibles</h1>
+    <p class="page-subtitle">Explorez notre catalogue complet d'organes et parties du corps</p>
+  </header>
+
+<section class="search-section">
+    <div class="search-bar">
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchTerm"
+        (input)="filterArticles()"
+        placeholder="Rechercher un article (description, état, partie du corps...)"
+      />
+    </div>
+
+    <div class="filters-row">
+      <div class="filter-group">
+        <label for="sortBy">Trier par :</label>
+        <select id="sortBy" [(ngModel)]="sortBy" (change)="sortArticles()" class="filter-select">
+          <option value="price-asc">Prix croissant</option>
+          <option value="price-desc">Prix décroissant</option>
+          <option value="date-desc">Plus récents</option>
+          <option value="date-asc">Plus anciens</option>
+          <option value="bodypart-asc">Partie du corps (A-Z)</option>
+        </select>
+      </div>
+
+      <div class="filter-group">
+        <label for="filterEtat">Filtrer par état :</label>
+        <select id="filterEtat" [(ngModel)]="filterEtat" (change)="filterArticles()" class="filter-select">
+          <option value="">Tous les états</option>
+          <option value="Excellent">Excellent</option>
+          <option value="Bon">Bon</option>
+          <option value="Moyen">Moyen</option>
+          <option value="Neuf">Neuf</option>
+        </select>
+      </div>
+
+      <div class="stats">
+        <span class="stat-badge">{{ filteredArticles.length }} article(s) trouvé(s)</span>
+      </div>
+    </div>
+  </section>
+
+<div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des articles...</p>
+  </div>
+
+<div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button class="btn btn-secondary" (click)="loadAllArticles()">Réessayer</button>
+  </div>
+
+<section class="articles-grid" *ngIf="!loading && !error">
+    <div *ngIf="filteredArticles.length === 0" class="no-results">
+      <h3>Aucun article trouvé</h3>
+      <p *ngIf="searchTerm">Aucun résultat pour "{{ searchTerm }}"</p>
+      <p *ngIf="!searchTerm">Aucun article disponible dans le catalogue</p>
+    </div>
+
+    <div class="article-card" *ngFor="let article of filteredArticles">
+      <div class="card-badge" [ngClass]="getEtatClass(article.etat)">{{ article.etat || 'N/A' }}</div>
+      <div class="card-body-part">
+        <span class="body-part-tag">{{ getBodyPartName(article) }}</span>
+      </div>
+      <div class="card-content">
+        <h3 class="article-title">Article #{{ article.id }}</h3>
+        <p class="article-description">{{ article.description || 'Aucune description disponible' }}</p>
+        <div class="article-details">
+          <div class="detail-item">
+            <span class="detail-label">Date d'extraction :</span>
+            <span class="detail-value">{{ formatDate(article.dateExtraction) }}</span>
+          </div>
+        </div>
+      </div>
+      <div class="card-footer">
+        <div class="price-section">
+          <span class="price-label">Prix :</span>
+          <span class="price-value">{{ article.prix | number:'1.2-2' }} €</span>
+        </div>
+        <button class="btn btn-primary" (click)="viewArticleDetails(article.id!)">Voir détails</button>
+      </div>
+    </div>
+  </section>
+</div>

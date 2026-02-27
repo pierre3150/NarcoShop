@@ -1,0 +1,95 @@
+﻿<div class="home-container">
+  
+  <header class="hero">
+    <div class="hero-content">
+      <h1 class="hero-title">{{ title }}</h1>
+      <p class="hero-subtitle">{{ subtitle }}</p>
+      <div class="hero-buttons">
+        <button class="btn btn-primary" (click)="navigateToArticles()">
+          Voir nos produits
+        </button>
+        <button class="btn btn-secondary" routerLink="/policy">
+          En savoir plus
+        </button>
+      </div>
+    </div>
+  </header>
+
+<section class="features">
+    <h2 class="section-title">Pourquoi choisir Narco Shop ?</h2>
+    <div class="features-grid">
+      <div class="feature-card" *ngFor="let feature of features">
+        <h3 class="feature-title">{{ feature.title }}</h3>
+        <p class="feature-description">{{ feature.description }}</p>
+      </div>
+    </div>
+  </section>
+
+<section class="articles-preview">
+    <h2 class="section-title">Nos produits vedettes</h2>
+
+    <div *ngIf="loading" class="loading">
+      <p>Chargement des articles...</p>
+    </div>
+
+    <div *ngIf="error" class="error-message">
+      <p>{{ error }}</p>
+      <button class="btn btn-secondary" (click)="loadArticles()">Réessayer</button>
+    </div>
+
+    <div class="articles-grid" *ngIf="!loading && !error">
+      <div class="article-card" *ngFor="let article of articles">
+        <div class="article-header">
+          <h3 class="article-name">Article #{{ article.id }}</h3>
+          <span class="article-price">{{ article.prix || 0 }} €</span>
+        </div>
+        <p class="article-description">{{ article.description || 'Aucune description disponible' }}</p>
+        <div class="article-info">
+          <span class="article-state" *ngIf="article.etat">État: {{ article.etat }}</span>
+        </div>
+        <div class="article-footer">
+          <span class="article-date">
+            {{ article.dateExtraction | date:'dd/MM/yyyy' }}
+          </span>
+        </div>
+      </div>
+    </div>
+
+    <div class="articles-cta" *ngIf="!loading && !error && articles.length > 0">
+      <button class="btn btn-primary" (click)="navigateToArticles()">
+        Voir tous les produits
+      </button>
+    </div>
+  </section>
+
+<section class="cta">
+    <div class="cta-content">
+      <h2 class="cta-title">
+        Alors, on se lance ?
+      </h2>
+      <p class="cta-text">Parcourez notre catalogue d'organes "fraîchement récoltés" (on vous jure qu'ils sont bons !)</p>
+      <div class="cta-buttons">
+        <button class="btn btn-large" routerLink="/articles">
+          Je veux un organe maintenant !
+        </button>
+        <button class="btn btn-large btn-outline" routerLink="/body-map">
+          Carte du corps
+        </button>
+      </div>
+    </div>
+  </section>
+
+<footer class="footer">
+    <div class="footer-content">
+      <p>&copy; 2026 Narco Shop. Tous droits réservés.</p>
+      <div class="footer-links">
+        <a routerLink="/policy" class="footer-link">Nos engagements &amp; Politique</a>
+        <span class="separator">•</span>
+        <a routerLink="/articles" class="footer-link">Catalogue d'organes</a>
+        <span class="separator">•</span>
+        <a routerLink="/body-parts" class="footer-link">Parties du corps</a>
+      </div>
+      <p class="footer-disclaimer">Ceci est une application de démonstration à des fins éducatives uniquement.</p>
+    </div>
+  </footer>
+</div>

@@ -1,0 +1,74 @@
+﻿<nav class="navbar">
+  <div class="navbar-container">
+    
+    <div class="navbar-brand" routerLink="/home">
+      <span class="brand-name">Narco Shop</span>
+    </div>
+
+<div class="navbar-menu">
+      <a routerLink="/home" routerLinkActive="active" [routerLinkActiveOptions]="{exact: true}" class="nav-link">Accueil</a>
+      <a routerLink="/articles" routerLinkActive="active" class="nav-link">Articles</a>
+      <a routerLink="/body-parts" routerLinkActive="active" class="nav-link">Parties du corps</a>
+      <a routerLink="/policy" routerLinkActive="active" class="nav-link">Politique</a>
+      <a *ngIf="isLoggedIn" routerLink="/cart" routerLinkActive="active" class="nav-link cart-link">
+        Panier <span class="cart-badge" *ngIf="cartItemCount > 0">{{ cartItemCount }}</span>
+      </a>
+    </div>
+
+<div class="navbar-user">
+      
+      <button *ngIf="!isLoggedIn" class="btn btn-auth" routerLink="/auth">Connexion / Inscription</button>
+
+<div *ngIf="isLoggedIn" class="user-dropdown" (click)="toggleDropdown()">
+        <div class="user-info">
+          <span class="user-name">{{ currentUser?.username }}</span>
+          <span class="dropdown-arrow">▼</span>
+        </div>
+
+<div class="dropdown-menu" *ngIf="showDropdown">
+          <div class="dropdown-item user-details">
+            <strong>{{ currentUser?.username }}</strong>
+            <small *ngIf="currentUser?.role" class="user-role">
+              {{ currentUser?.role === 'ADMIN' ? 'Administrateur' : 'Utilisateur' }}
+            </small>
+            <small *ngIf="currentUser?.adresse">{{ currentUser?.adresse }}</small>
+          </div>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" *ngIf="currentUser?.role === 'ADMIN'" routerLink="/admin" (click)="closeDropdown()">Administration</a>
+          <a class="dropdown-item" routerLink="/orders" (click)="closeDropdown()">Mes commandes</a>
+          <a class="dropdown-item" routerLink="/settings" (click)="closeDropdown()">Paramètres</a>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item logout" (click)="logout()">Déconnexion</button>
+        </div>
+      </div>
+    </div>
+
+<button class="mobile-menu-toggle" (click)="toggleMobileMenu()">
+      <span class="hamburger-icon" [class.active]="showMobileMenu">&#9776;</span>
+    </button>
+  </div>
+
+<div class="mobile-menu" [class.active]="showMobileMenu">
+    <a routerLink="/home" (click)="closeMobileMenu()" class="mobile-nav-link">Accueil</a>
+    <a routerLink="/articles" (click)="closeMobileMenu()" class="mobile-nav-link">Articles</a>
+    <a routerLink="/body-parts" (click)="closeMobileMenu()" class="mobile-nav-link">Parties du corps</a>
+    <a routerLink="/policy" (click)="closeMobileMenu()" class="mobile-nav-link">Politique</a>
+
+    <div class="mobile-divider"></div>
+
+<div *ngIf="!isLoggedIn">
+      <a routerLink="/auth" (click)="closeMobileMenu()" class="mobile-nav-link auth-link">Connexion / Inscription</a>
+    </div>
+
+    <div *ngIf="isLoggedIn">
+      <div class="mobile-user-info">
+        <strong>{{ currentUser?.username }}</strong>
+        <small *ngIf="currentUser?.adresse">{{ currentUser?.adresse }}</small>
+      </div>
+      <a *ngIf="currentUser?.role === 'ADMIN'" routerLink="/admin" (click)="closeMobileMenu()" class="mobile-nav-link">Administration</a>
+      <a routerLink="/orders" (click)="closeMobileMenu()" class="mobile-nav-link">Mes commandes</a>
+      <a routerLink="/settings" (click)="closeMobileMenu()" class="mobile-nav-link">Paramètres</a>
+      <button class="mobile-nav-link logout" (click)="logout()">Déconnexion</button>
+    </div>
+  </div>
+</nav>

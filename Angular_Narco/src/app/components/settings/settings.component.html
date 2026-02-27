@@ -1,0 +1,250 @@
+﻿<div class="settings-container">
+  
+  <header class="settings-header">
+    <h1>Paramètres du Compte</h1>
+    <p *ngIf="currentUser">Bienvenue, <strong>{{ currentUser.username }}</strong> !</p>
+  </header>
+
+<div class="tabs-nav">
+    <button
+      class="tab-button"
+      [class.active]="activeTab === 'profile'"
+      (click)="activeTab = 'profile'"
+    >
+      Mon Profil
+    </button>
+    <button
+      *ngIf="isAdmin"
+      class="tab-button"
+      [class.active]="activeTab === 'admin'"
+      (click)="activeTab = 'admin'; loadAllUsers()"
+    >
+      Gestion Utilisateurs
+    </button>
+  </div>
+
+<div class="tab-content" *ngIf="activeTab === 'profile'">
+    <div class="profile-section">
+      <h2>Informations Personnelles</h2>
+
+      <form class="settings-form" (ngSubmit)="updateProfile()" #profileForm="ngForm">
+        
+        <div class="form-group">
+          <label>Nom d'utilisateur</label>
+          <input
+            type="text"
+            [value]="currentUser?.username"
+            disabled
+            class="form-input"
+          />
+          <small class="form-hint">Le nom d'utilisateur ne peut pas être modifié</small>
+        </div>
+
+<div class="form-group">
+          <label>Adresse de livraison</label>
+          <textarea
+            name="adresse"
+            [(ngModel)]="profileData.adresse"
+            rows="3"
+            placeholder="123 Rue de la Paix, 75000 Paris"
+            class="form-input"
+          ></textarea>
+        </div>
+
+<div class="form-group">
+          <label>Nouveau mot de passe</label>
+          <input
+            type="password"
+            name="password"
+            [(ngModel)]="profileData.password"
+            placeholder="Laisser vide pour ne pas changer"
+            class="form-input"
+          />
+          <small class="form-hint">Minimum 6 caractères (sera crypté en SHA-256)</small>
+        </div>
+
+<div class="form-message success" *ngIf="successMessage">
+          {{ successMessage }}
+        </div>
+        <div class="form-message error" *ngIf="errorMessage">
+          {{ errorMessage }}
+        </div>
+
+<button type="submit" class="btn btn-primary" [disabled]="loading">
+          <span *ngIf="!loading">Sauvegarder</span>
+          <span *ngIf="loading">Sauvegarde...</span>
+        </button>
+      </form>
+    </div>
+
+<div class="bank-section">
+      <div class="bank-header">
+        <h2>Mes Cartes Bancaires</h2>
+        <button class="btn btn-primary btn-sm" (click)="toggleAddCardForm()">
+          <span *ngIf="!showAddCardForm">Ajouter une carte</span>
+          <span *ngIf="showAddCardForm">Annuler</span>
+        </button>
+      </div>
+
+<form class="settings-form add-card-form" *ngIf="showAddCardForm" (ngSubmit)="addCard()" #cardForm="ngForm">
+        <div class="form-group">
+          <label>Numéro de carte bancaire (16 chiffres)</label>
+          <input
+            type="text"
+            name="codeCb"
+            [(ngModel)]="cardNumberFormatted"
+            (input)="formatCardNumber($event)"
+            placeholder="1234 5678 9012 3456"
+            maxlength="19"
+            required
+            pattern="[0-9]{4} [0-9]{4} [0-9]{4} [0-9]{4}"
+            class="form-input"
+            #cardNumberInput="ngModel"
+          />
+          <small class="form-hint" *ngIf="cardNumberInput.invalid && cardNumberInput.touched">
+            Le numéro de carte doit contenir exactement 16 chiffres
+          </small>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label>CCV (3 chiffres)</label>
+            <input
+              type="text"
+              name="ccv"
+              [(ngModel)]="ccvFormatted"
+              (input)="formatCCV($event)"
+              placeholder="123"
+              maxlength="3"
+              required
+              pattern="[0-9]{3}"
+              class="form-input"
+              #ccvInput="ngModel"
+            />
+            <small class="form-hint" *ngIf="ccvInput.invalid && ccvInput.touched">
+              Le CCV doit contenir exactement 3 chiffres
+            </small>
+          </div>
+
+          <div class="form-group">
+            <label>Date d'expiration (MM/YY)</label>
+            <input
+              type="text"
+              name="expiryDate"
+              [(ngModel)]="newCard.expiryDate"
+              (input)="formatExpiryDate($event)"
+              placeholder="MM/YY"
+              maxlength="5"
+              required
+              pattern="(0[1-9]|1[0-2])\/[0-9]{2}"
+              class="form-input"
+              #expiryInput="ngModel"
+            />
+            <small class="form-hint" *ngIf="expiryInput.invalid && expiryInput.touched">
+              Format: MM/YY (ex: 12/25)
+            </small>
+          </div>
+        </div>
+
+        <button type="submit" class="btn btn-primary" [disabled]="!cardForm.valid || cardLoading">
+          <span *ngIf="!cardLoading">Ajouter la carte</span>
+          <span *ngIf="cardLoading">Ajout...</span>
+        </button>
+      </form>
+
+<div class="form-message success" *ngIf="cardSuccessMessage">
+        {{ cardSuccessMessage }}
+      </div>
+      <div class="form-message error" *ngIf="cardErrorMessage">
+        {{ cardErrorMessage }}
+      </div>
+
+<div class="cards-list" *ngIf="userCards.length > 0">
+        <div class="card-item" *ngFor="let card of userCards">
+          <div class="card-info">
+            <div class="card-number">{{ maskCardNumber(card.codeCb) }}</div>
+            <div class="card-details">
+              <span>CCV: {{ maskCCV(card.ccv) }}</span>
+              <span>Expire: {{ card.expiryDate }}</span>
+            </div>
+          </div>
+          <button class="btn btn-danger btn-sm" (click)="deleteCard(card.id)">Supprimer</button>
+        </div>
+      </div>
+
+      <div class="no-cards" *ngIf="userCards.length === 0 && !showAddCardForm">
+        <p>Aucune carte bancaire enregistrée</p>
+        <p class="hint">Ajoutez une carte pour faciliter vos paiements</p>
+      </div>
+
+      <div class="info-box warning">
+        <p><strong>Sécurité :</strong> Vous pouvez enregistrer plusieurs cartes bancaires.
+        Elles sont stockées de manière sécurisée et ne seront utilisées que pour vos commandes.</p>
+      </div>
+    </div>
+  </div>
+
+<div class="tab-content" *ngIf="activeTab === 'admin' && isAdmin">
+    <div class="admin-section">
+      <h2>Gestion des Utilisateurs</h2>
+      <p class="admin-subtitle">Accès administrateur : Vous pouvez voir et gérer tous les utilisateurs</p>
+
+<div *ngIf="adminLoading" class="loading">
+        Chargement des utilisateurs...
+      </div>
+
+<div *ngIf="!adminLoading && allUsers.length > 0" class="users-list">
+        <div class="user-card" *ngFor="let user of allUsers">
+          <div class="user-header">
+            <div class="user-info">
+              <h3>{{ user.username }}</h3>
+              <span class="user-role-badge" [class.admin]="user.role === 'ADMIN'">
+                {{ user.role }}
+              </span>
+            </div>
+            <button
+              *ngIf="user.id !== currentUser?.id"
+              class="btn btn-danger btn-sm"
+              (click)="deleteUser(user.id)"
+            >
+              Supprimer
+            </button>
+          </div>
+
+          <div class="user-details">
+            <div class="detail-item">
+              <strong>ID :</strong> {{ user.id }}
+            </div>
+            <div class="detail-item">
+              <strong>Adresse :</strong> {{ user.adresse || 'Non renseignée' }}
+            </div>
+          </div>
+
+<div class="bank-info">
+            <h4>Cartes Bancaires ({{ getUserCards(user.id).length }})</h4>
+            <div class="bank-details" *ngIf="getUserCards(user.id).length > 0">
+              <div class="card-item-admin" *ngFor="let card of getUserCards(user.id)">
+                <div class="detail-item">
+                  <strong>Numéro :</strong> {{ maskCardNumber(card.codeCb) }}
+                </div>
+                <div class="detail-item">
+                  <strong>CCV :</strong> {{ maskCCV(card.ccv) }}
+                </div>
+                <div class="detail-item">
+                  <strong>Expiration :</strong> {{ card.expiryDate }}
+                </div>
+              </div>
+            </div>
+            <div class="no-bank-info" *ngIf="getUserCards(user.id).length === 0">
+              <p>Aucune carte bancaire enregistrée</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+<div *ngIf="!adminLoading && allUsers.length === 0" class="no-users">
+        <p>Aucun utilisateur trouvé</p>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,295 @@
+﻿<div class="body-map-container">
+  <h1>Sélectionnez une partie du corps</h1>
+
+  <div class="content-wrapper">
+    
+    <div class="body-svg-container">
+      <svg viewBox="0 0 400 800" class="human-body-svg">
+        
+        <ellipse
+          cx="200" cy="80" rx="50" ry="60"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'tête'"
+          [class.selected]="isBodyPartSelected('tête')"
+          (click)="onBodyPartClick('tête')"
+          (mouseenter)="onBodyPartHover('tête')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="200" y="85" text-anchor="middle" class="body-part-label">Tête</text>
+
+<rect
+          x="180" y="130" width="40" height="40"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'cou'"
+          [class.selected]="isBodyPartSelected('cou')"
+          (click)="onBodyPartClick('cou')"
+          (mouseenter)="onBodyPartHover('cou')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="200" y="155" text-anchor="middle" class="body-part-label">Cou</text>
+
+<circle
+          cx="130" cy="200" r="35"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'épaule'"
+          [class.selected]="isBodyPartSelected('épaule')"
+          (click)="onBodyPartClick('épaule')"
+          (mouseenter)="onBodyPartHover('épaule')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="130" y="205" text-anchor="middle" class="body-part-label">Épaule</text>
+
+<circle
+          cx="270" cy="200" r="35"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'épaule'"
+          [class.selected]="isBodyPartSelected('épaule')"
+          (click)="onBodyPartClick('épaule')"
+          (mouseenter)="onBodyPartHover('épaule')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="270" y="205" text-anchor="middle" class="body-part-label">Épaule</text>
+
+<rect
+          x="150" y="170" width="100" height="150" rx="10"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'torse'"
+          [class.selected]="isBodyPartSelected('torse')"
+          (click)="onBodyPartClick('torse')"
+          (mouseenter)="onBodyPartHover('torse')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="200" y="250" text-anchor="middle" class="body-part-label">Torse</text>
+
+<rect
+          x="90" y="230" width="40" height="120" rx="20"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'bras'"
+          [class.selected]="isBodyPartSelected('bras')"
+          (click)="onBodyPartClick('bras')"
+          (mouseenter)="onBodyPartHover('bras')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="110" y="295" text-anchor="middle" class="body-part-label">Bras</text>
+
+<rect
+          x="270" y="230" width="40" height="120" rx="20"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'bras'"
+          [class.selected]="isBodyPartSelected('bras')"
+          (click)="onBodyPartClick('bras')"
+          (mouseenter)="onBodyPartHover('bras')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="290" y="295" text-anchor="middle" class="body-part-label">Bras</text>
+
+<circle
+          cx="110" cy="360" r="20"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'coude'"
+          [class.selected]="isBodyPartSelected('coude')"
+          (click)="onBodyPartClick('coude')"
+          (mouseenter)="onBodyPartHover('coude')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+
+<circle
+          cx="290" cy="360" r="20"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'coude'"
+          [class.selected]="isBodyPartSelected('coude')"
+          (click)="onBodyPartClick('coude')"
+          (mouseenter)="onBodyPartHover('coude')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+
+<rect
+          x="90" y="375" width="40" height="100" rx="20"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'avant-bras'"
+          [class.selected]="isBodyPartSelected('avant-bras')"
+          (click)="onBodyPartClick('avant-bras')"
+          (mouseenter)="onBodyPartHover('avant-bras')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+
+<rect
+          x="270" y="375" width="40" height="100" rx="20"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'avant-bras'"
+          [class.selected]="isBodyPartSelected('avant-bras')"
+          (click)="onBodyPartClick('avant-bras')"
+          (mouseenter)="onBodyPartHover('avant-bras')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+
+<ellipse
+          cx="110" cy="500" rx="20" ry="30"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'main'"
+          [class.selected]="isBodyPartSelected('main')"
+          (click)="onBodyPartClick('main')"
+          (mouseenter)="onBodyPartHover('main')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="110" y="505" text-anchor="middle" class="body-part-label">Main</text>
+
+<ellipse
+          cx="290" cy="500" rx="20" ry="30"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'main'"
+          [class.selected]="isBodyPartSelected('main')"
+          (click)="onBodyPartClick('main')"
+          (mouseenter)="onBodyPartHover('main')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="290" y="505" text-anchor="middle" class="body-part-label">Main</text>
+
+<rect
+          x="160" y="320" width="80" height="80" rx="10"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'abdomen'"
+          [class.selected]="isBodyPartSelected('abdomen')"
+          (click)="onBodyPartClick('abdomen')"
+          (mouseenter)="onBodyPartHover('abdomen')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="200" y="365" text-anchor="middle" class="body-part-label">Abdomen</text>
+
+<rect
+          x="160" y="400" width="80" height="60" rx="10"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'bassin'"
+          [class.selected]="isBodyPartSelected('bassin')"
+          (click)="onBodyPartClick('bassin')"
+          (mouseenter)="onBodyPartHover('bassin')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="200" y="435" text-anchor="middle" class="body-part-label">Bassin</text>
+
+<rect
+          x="165" y="460" width="35" height="110" rx="15"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'cuisse'"
+          [class.selected]="isBodyPartSelected('cuisse')"
+          (click)="onBodyPartClick('cuisse')"
+          (mouseenter)="onBodyPartHover('cuisse')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="182" y="520" text-anchor="middle" class="body-part-label">Cuisse</text>
+
+<rect
+          x="200" y="460" width="35" height="110" rx="15"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'cuisse'"
+          [class.selected]="isBodyPartSelected('cuisse')"
+          (click)="onBodyPartClick('cuisse')"
+          (mouseenter)="onBodyPartHover('cuisse')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="217" y="520" text-anchor="middle" class="body-part-label">Cuisse</text>
+
+<circle
+          cx="182" cy="580" r="18"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'genou'"
+          [class.selected]="isBodyPartSelected('genou')"
+          (click)="onBodyPartClick('genou')"
+          (mouseenter)="onBodyPartHover('genou')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+
+<circle
+          cx="217" cy="580" r="18"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'genou'"
+          [class.selected]="isBodyPartSelected('genou')"
+          (click)="onBodyPartClick('genou')"
+          (mouseenter)="onBodyPartHover('genou')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+
+<rect
+          x="170" y="595" width="25" height="120" rx="12"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'jambe'"
+          [class.selected]="isBodyPartSelected('jambe')"
+          (click)="onBodyPartClick('jambe')"
+          (mouseenter)="onBodyPartHover('jambe')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="182" y="660" text-anchor="middle" class="body-part-label">Jambe</text>
+
+<rect
+          x="205" y="595" width="25" height="120" rx="12"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'jambe'"
+          [class.selected]="isBodyPartSelected('jambe')"
+          (click)="onBodyPartClick('jambe')"
+          (mouseenter)="onBodyPartHover('jambe')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="217" y="660" text-anchor="middle" class="body-part-label">Jambe</text>
+
+<ellipse
+          cx="182" cy="740" rx="15" ry="25"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'pied'"
+          [class.selected]="isBodyPartSelected('pied')"
+          (click)="onBodyPartClick('pied')"
+          (mouseenter)="onBodyPartHover('pied')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="182" y="745" text-anchor="middle" class="body-part-label">Pied</text>
+
+<ellipse
+          cx="217" cy="740" rx="15" ry="25"
+          class="body-part"
+          [class.hovered]="hoveredBodyPart === 'pied'"
+          [class.selected]="isBodyPartSelected('pied')"
+          (click)="onBodyPartClick('pied')"
+          (mouseenter)="onBodyPartHover('pied')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+        <text x="217" y="745" text-anchor="middle" class="body-part-label">Pied</text>
+
+<line
+          x1="200" y1="170" x2="200" y2="460"
+          class="body-part-line"
+          [class.hovered]="hoveredBodyPart === 'colonne vertébrale'"
+          [class.selected]="isBodyPartSelected('colonne vertébrale')"
+          (click)="onBodyPartClick('colonne vertébrale')"
+          (mouseenter)="onBodyPartHover('colonne vertébrale')"
+          (mouseleave)="onBodyPartLeave()"
+        />
+      </svg>
+    </div>
+
+<div class="articles-panel" *ngIf="selectedBodyPart">
+      <div class="panel-header">
+        <h2>Articles pour : {{ selectedBodyPart.name }}</h2>
+        <button class="close-btn" (click)="closeArticlesList()">✕</button>
+      </div>
+
+      <div class="articles-list" *ngIf="articles.length > 0; else noArticles">
+        <div class="article-card" *ngFor="let article of articles">
+          <h3>Article #{{ article.id }}</h3>
+          <p><strong>État:</strong> {{ article.etat || 'N/A' }}</p>
+          <p><strong>Description:</strong> {{ article.description || 'N/A' }}</p>
+          <p><strong>Prix:</strong> {{ article.prix || 0 }} €</p>
+          <p><strong>Date d'extraction:</strong> {{ article.dateExtraction | date:'short' }}</p>
+        </div>
+      </div>
+
+      <ng-template #noArticles>
+        <div class="no-articles">
+          <p>Aucun article disponible pour cette partie du corps.</p>
+        </div>
+      </ng-template>
+    </div>
+  </div>
+
+  <div class="info-panel" *ngIf="hoveredBodyPart && !selectedBodyPart">
+    <p>Cliquez sur <strong>{{ hoveredBodyPart }}</strong> pour voir les articles</p>
+  </div>
+</div>

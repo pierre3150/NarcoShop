@@ -1,0 +1,172 @@
+﻿<div class="admin-dashboard" *ngIf="isAdmin">
+  <header class="admin-header">
+    <h1>Dashboard Administrateur</h1>
+    <p>Gestion des utilisateurs et commandes</p>
+  </header>
+
+<div class="tabs-navigation">
+    <button class="tab-btn" [class.active]="activeTab === 'stats'" (click)="activeTab = 'stats'">Statistiques</button>
+    <button class="tab-btn" [class.active]="activeTab === 'orders'" (click)="activeTab = 'orders'">
+      Commandes <span class="badge" *ngIf="pendingOrders > 0">{{ pendingOrders }}</span>
+    </button>
+    <button class="tab-btn" [class.active]="activeTab === 'users'" (click)="activeTab = 'users'">Utilisateurs</button>
+    <button class="tab-btn" [class.active]="activeTab === 'body-parts'" (click)="activeTab = 'body-parts'; goToManageBodyParts()">Parties du corps</button>
+  </div>
+
+<div class="tab-content" *ngIf="activeTab === 'stats'">
+    <div class="stats-grid" *ngIf="stats">
+      <div class="stat-card primary">
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalUsers }}</span>
+          <span class="stat-label">Utilisateurs</span>
+        </div>
+      </div>
+      <div class="stat-card success">
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalOrders }}</span>
+          <span class="stat-label">Commandes</span>
+        </div>
+      </div>
+      <div class="stat-card warning">
+        <div class="stat-info">
+          <span class="stat-value">{{ stats.totalRevenue }} €</span>
+          <span class="stat-label">Chiffre d'affaires</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="status-grid" *ngIf="stats?.ordersByStatus">
+      <div class="status-card">
+        <h3>En attente</h3>
+        <span class="status-value">{{ stats.ordersByStatus.PENDING || 0 }}</span>
+      </div>
+      <div class="status-card">
+        <h3>En préparation</h3>
+        <span class="status-value">{{ stats.ordersByStatus.PREPARING || 0 }}</span>
+      </div>
+      <div class="status-card">
+        <h3>Livré</h3>
+        <span class="status-value">{{ stats.ordersByStatus.DELIVERED || 0 }}</span>
+      </div>
+      <div class="status-card">
+        <h3>Terminé</h3>
+        <span class="status-value">{{ stats.ordersByStatus.COMPLETED || 0 }}</span>
+      </div>
+    </div>
+  </div>
+
+<div class="tab-content" *ngIf="activeTab === 'orders'">
+    <div class="filters-bar">
+      <select [(ngModel)]="filterStatus" (change)="filterOrders()" class="filter-select">
+        <option value="">Tous les statuts</option>
+        <option value="PENDING">En attente</option>
+        <option value="PREPARING">En préparation</option>
+        <option value="DELIVERED">Livré</option>
+        <option value="COMPLETED">Terminé</option>
+      </select>
+      <span class="results-count">{{ filteredOrders.length }} commande(s)</span>
+    </div>
+
+    <div class="orders-list">
+      <div class="order-admin-card" *ngFor="let order of filteredOrders">
+        <div class="order-admin-header">
+          <div class="order-admin-info">
+            <h3>Commande #{{ order.orderId }}</h3>
+            <p class="order-admin-date">{{ order.orderDate | date:'short' }}</p>
+            <p class="order-admin-user">{{ order.username }}</p>
+            <p class="order-admin-address">{{ order.userAddress }}</p>
+          </div>
+          <div class="order-admin-status">
+            <select [(ngModel)]="order.status" (change)="updateStatus(order.orderId, order.status)" class="status-select"
+              [class.pending]="order.status === 'PENDING'" [class.preparing]="order.status === 'PREPARING'"
+              [class.delivered]="order.status === 'DELIVERED'" [class.completed]="order.status === 'COMPLETED'">
+              <option value="PENDING">En attente</option>
+              <option value="PREPARING">En préparation</option>
+              <option value="DELIVERED">Livré</option>
+              <option value="COMPLETED">Opération terminée</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="order-admin-items">
+          <div class="item-admin" *ngFor="let item of order.items">
+            <span class="item-admin-name">{{ item.articleName }}</span>
+            <span class="item-admin-price">{{ item.price }} €</span>
+          </div>
+        </div>
+
+        <div class="order-admin-footer">
+          <div class="order-admin-total">
+            <strong>Total :</strong> {{ order.totalPrice }} €
+          </div>
+          <div class="order-admin-actions">
+            <button class="btn btn-sm btn-secondary" (click)="viewOrderDetails(order)">Détails</button>
+            <button class="btn btn-sm btn-primary" (click)="viewUserCards(order.userId)">Cartes</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="no-results" *ngIf="filteredOrders.length === 0">
+        <p>Aucune commande trouvée</p>
+      </div>
+    </div>
+  </div>
+
+<div class="tab-content" *ngIf="activeTab === 'users'">
+    <div class="users-grid">
+      <div class="user-admin-card" *ngFor="let user of users">
+        <div class="user-admin-header">
+          <div class="user-admin-info">
+            <h3>{{ user.username }}</h3>
+            <span class="user-admin-role" [class.admin]="user.role === 'ADMIN'">
+              {{ user.role === 'ADMIN' ? 'Admin' : 'User' }}
+            </span>
+          </div>
+        </div>
+
+        <div class="user-admin-details">
+          <p><strong>Adresse :</strong> {{ user.adresse || 'Non renseignée' }}</p>
+          <p><strong>Commandes :</strong> {{ user.orderCount }}</p>
+          <p><strong>Cartes :</strong> {{ user.cardCount }}</p>
+        </div>
+
+        <div class="user-admin-actions">
+          <button class="btn btn-sm btn-primary" (click)="viewUserCards(user.id)">Voir les cartes</button>
+          <button class="btn btn-sm btn-secondary" (click)="viewUserOrders(user.id)">Commandes</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="modal-overlay" *ngIf="showCardsModal" (click)="closeCardsModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>Cartes Bancaires</h2>
+        <button class="modal-close" (click)="closeCardsModal()">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <div class="card-item" *ngFor="let card of selectedUserCards">
+          <div class="card-details">
+            <p><strong>Numéro :</strong> {{ card.codeCb }}</p>
+            <p><strong>CCV :</strong> {{ card.ccv }}</p>
+            <p><strong>Expiration :</strong> {{ card.expiryDate }}</p>
+          </div>
+        </div>
+        <p *ngIf="selectedUserCards.length === 0">Aucune carte enregistrée</p>
+      </div>
+    </div>
+  </div>
+
+<div class="messages">
+    <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+    <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>
+
+<div class="not-authorized" *ngIf="!isAdmin">
+  <div class="not-authorized-card">
+    <h2>Accès Refusé</h2>
+    <p>Cette page est réservée aux administrateurs</p>
+    <button class="btn btn-primary" routerLink="/home">Retour à l'accueil</button>
+  </div>
+</div>

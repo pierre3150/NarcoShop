@@ -1,0 +1,65 @@
+﻿<div class="body-parts-container">
+  
+  <header class="page-header">
+    <h1 class="page-title">Catalogue des Parties du Corps</h1>
+    <p class="page-subtitle">Parcourez notre inventaire complet d'organes disponibles</p>
+  </header>
+
+<section class="search-section">
+    <div class="search-bar">
+      <input
+        type="text"
+        class="search-input"
+        [(ngModel)]="searchTerm"
+        (input)="filterBodyParts()"
+        placeholder="Rechercher une partie du corps..."
+      />
+    </div>
+
+    <div class="filters">
+      <div class="sort-section">
+        <label for="sortBy">Trier par:</label>
+        <select id="sortBy" [(ngModel)]="sortBy" (change)="sortBodyParts()" class="sort-select">
+          <option value="name-asc">Nom (A-Z)</option>
+          <option value="name-desc">Nom (Z-A)</option>
+          <option value="articles-desc">Plus d'articles</option>
+          <option value="articles-asc">Moins d'articles</option>
+        </select>
+      </div>
+      <div class="stats">
+        <span class="stat-badge">{{ filteredBodyParts.length }} partie(s) trouvée(s)</span>
+      </div>
+    </div>
+  </section>
+
+<div *ngIf="loading" class="loading">
+    <div class="spinner"></div>
+    <p>Chargement des parties du corps...</p>
+  </div>
+
+<div *ngIf="error" class="error-message">
+    <p>{{ error }}</p>
+    <button class="btn btn-secondary" (click)="loadBodyParts()">Réessayer</button>
+  </div>
+
+<section class="body-parts-grid" *ngIf="!loading && !error">
+    <div *ngIf="filteredBodyParts.length === 0" class="no-results">
+      <h3>Aucune partie du corps trouvée</h3>
+      <p *ngIf="searchTerm">Aucun résultat pour "{{ searchTerm }}"</p>
+    </div>
+
+    <div class="body-part-card" *ngFor="let bodyPart of filteredBodyParts">
+      <div class="card-header">
+        <h3 class="body-part-name">{{ bodyPart.nameBodyPart || bodyPart.name }}</h3>
+      </div>
+      <div class="card-content">
+        <div class="articles-count">
+          <span class="count-badge">{{ getArticlesCount(bodyPart.id!) }} article(s) disponible(s)</span>
+        </div>
+      </div>
+      <div class="card-footer">
+        <button class="btn btn-primary" (click)="viewBodyPartDetails(bodyPart.id!)">Voir les articles</button>
+      </div>
+    </div>
+  </section>
+</div>

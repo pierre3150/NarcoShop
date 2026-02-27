@@ -1,0 +1,137 @@
+﻿<div class="manage-body-parts-container">
+  <header class="page-header">
+    <h1>Gestion des Parties du Corps</h1>
+    <button class="btn btn-primary" (click)="showAddModal = true">Ajouter une catégorie</button>
+  </header>
+
+<div class="body-parts-list">
+    <div class="body-part-block" *ngFor="let bodyPart of bodyParts">
+
+<div class="body-part-card" [class.expanded]="selectedBodyPartForArticles?.id === bodyPart.id">
+        <div class="body-part-info">
+          <h3>{{ bodyPart.nameBodyPart }}</h3>
+          <p class="body-part-id">ID : #{{ bodyPart.id }}</p>
+        </div>
+        <div class="body-part-actions">
+          <button class="btn btn-sm btn-info" (click)="toggleArticles(bodyPart)">
+            {{ selectedBodyPartForArticles?.id === bodyPart.id ? 'Masquer' : 'Articles' }}
+          </button>
+          <button class="btn btn-sm btn-secondary" (click)="editBodyPart(bodyPart)">Modifier</button>
+          <button class="btn btn-sm btn-danger" (click)="deleteBodyPart(bodyPart.id)">Supprimer</button>
+        </div>
+      </div>
+
+<div class="articles-inline" *ngIf="selectedBodyPartForArticles?.id === bodyPart.id">
+        <div class="articles-inline-header">
+          <span class="articles-inline-title">Articles de "{{ bodyPart.nameBodyPart }}"</span>
+          <button class="btn btn-primary btn-sm" (click)="openAddArticleModal()">Ajouter un article</button>
+        </div>
+
+        <div class="articles-grid">
+          <div class="article-card" *ngFor="let article of articles">
+            <div class="article-info">
+              <span class="article-etat"
+                [class.parfait]="article.etat === 'PARFAIT'"
+                [class.bon]="article.etat === 'BON'"
+                [class.moyen]="article.etat === 'MOYEN'"
+                [class.mauvais]="article.etat === 'MAUVAIS'">
+                {{ article.etat }}
+              </span>
+              <div class="article-details">
+                <span class="article-prix">{{ article.prix }} €</span>
+                <span class="article-description" *ngIf="article.description">{{ article.description }}</span>
+                <span class="article-date" *ngIf="article.dateExtraction">{{ article.dateExtraction | date:'dd/MM/yyyy' }}</span>
+              </div>
+            </div>
+            <div class="article-actions">
+              <button class="btn btn-sm btn-secondary" (click)="editArticle(article)">Modifier</button>
+              <button class="btn btn-sm btn-danger" (click)="deleteArticle(article.id)">Supprimer</button>
+            </div>
+          </div>
+
+          <div class="no-articles" *ngIf="articles.length === 0">
+            <p>Aucun article pour cette catégorie</p>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="no-results" *ngIf="bodyParts.length === 0">
+      <p>Aucune partie du corps enregistrée</p>
+    </div>
+  </div>
+
+<div class="modal-overlay" *ngIf="showAddModal || showEditModal" (click)="closeModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ showEditModal ? 'Modifier' : 'Ajouter' }} une catégorie</h2>
+        <button class="modal-close" (click)="closeModal()">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="showEditModal ? updateBodyPart() : addBodyPart()" #bodyPartForm="ngForm">
+          <div class="form-group">
+            <label for="bodyPartName">Nom de la partie du corps *</label>
+            <input type="text" id="bodyPartName" name="bodyPartName"
+              [(ngModel)]="currentBodyPart.nameBodyPart" required class="form-control"
+              placeholder="Ex : Rein, Foie, Cœur...">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!bodyPartForm.valid || saving">
+              <span *ngIf="!saving">{{ showEditModal ? 'Enregistrer' : 'Ajouter' }}</span>
+              <span *ngIf="saving">En cours...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<div class="modal-overlay" *ngIf="showAddArticleModal || showEditArticleModal" (click)="closeArticleModal()">
+    <div class="modal-content" (click)="$event.stopPropagation()">
+      <div class="modal-header">
+        <h2>{{ showEditArticleModal ? 'Modifier' : 'Ajouter' }} un article — {{ selectedBodyPartForArticles?.nameBodyPart }}</h2>
+        <button class="modal-close" (click)="closeArticleModal()">&#x2715;</button>
+      </div>
+      <div class="modal-body">
+        <form (ngSubmit)="showEditArticleModal ? updateArticle() : addArticle()" #articleForm="ngForm">
+          <div class="form-group">
+            <label for="articleEtat">État *</label>
+            <select id="articleEtat" name="articleEtat" [(ngModel)]="currentArticle.etat" required class="form-control">
+              <option *ngFor="let etat of etats" [value]="etat">{{ etat }}</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="articlePrix">Prix (€) *</label>
+            <input type="number" id="articlePrix" name="articlePrix"
+              [(ngModel)]="currentArticle.prix" required min="1" class="form-control" placeholder="Ex : 150">
+          </div>
+          <div class="form-group">
+            <label for="articleDescription">Description</label>
+            <textarea id="articleDescription" name="articleDescription"
+              [(ngModel)]="currentArticle.description" class="form-control"
+              rows="3" placeholder="Description de l'article..."></textarea>
+          </div>
+          <div class="form-group">
+            <label for="articleDate">Date d'extraction *</label>
+            <input type="date" id="articleDate" name="articleDate"
+              [(ngModel)]="currentArticle.dateExtraction" required class="form-control">
+          </div>
+          <div class="form-actions">
+            <button type="button" class="btn btn-secondary" (click)="closeArticleModal()">Annuler</button>
+            <button type="submit" class="btn btn-primary" [disabled]="!articleForm.valid || savingArticle">
+              <span *ngIf="!savingArticle">{{ showEditArticleModal ? 'Enregistrer' : 'Ajouter' }}</span>
+              <span *ngIf="savingArticle">En cours...</span>
+            </button>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+<div class="messages">
+    <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+    <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>

@@ -1,0 +1,103 @@
+﻿<div class="order-history-container">
+  
+  <header class="page-header">
+    <h1>Mon Historique de Commandes</h1>
+    <p *ngIf="currentUser">Commandes de <strong>{{ currentUser.username }}</strong></p>
+  </header>
+
+<div class="login-required" *ngIf="!isLoggedIn">
+    <div class="login-card">
+      <h2>Connexion Requise</h2>
+      <p>Vous devez être connecté pour voir votre historique</p>
+      <button class="btn btn-primary" routerLink="/auth">Se connecter</button>
+    </div>
+  </div>
+
+<div class="loading" *ngIf="loading && isLoggedIn">
+    <p>Chargement de votre historique...</p>
+  </div>
+
+<div class="no-orders" *ngIf="!loading && isLoggedIn && orders.length === 0">
+    <div class="empty-card">
+      <h2>Aucune commande</h2>
+      <p>Vous n'avez pas encore passé de commande</p>
+      <button class="btn btn-primary" routerLink="/articles">Commencer mes achats</button>
+    </div>
+  </div>
+
+<div class="orders-list" *ngIf="!loading && isLoggedIn && orders.length > 0">
+    <div class="orders-stats">
+      <div class="stat-card">
+        <div class="stat-content">
+          <span class="stat-value">{{ orders.length }}</span>
+          <span class="stat-label">Commande(s)</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content">
+          <span class="stat-value">{{ getTotalSpent() }} €</span>
+          <span class="stat-label">Total dépensé</span>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-content">
+          <span class="stat-value">{{ getTotalItems() }}</span>
+          <span class="stat-label">Article(s)</span>
+        </div>
+      </div>
+    </div>
+
+<div class="order-card" *ngFor="let order of orders">
+      <div class="order-header">
+        <div class="order-info">
+          <h3>Commande #{{ order.orderId }}</h3>
+          <p class="order-date">Commandé le {{ order.orderDate | date:'long' }}</p>
+        </div>
+        <div class="order-status">
+          <span class="status-badge"
+                [ngClass]="{
+                  'pending': order.status === 'PENDING',
+                  'preparing': order.status === 'PREPARING',
+                  'delivered': order.status === 'DELIVERED',
+                  'completed': order.status === 'COMPLETED'
+                }">
+            {{ getStatusLabel(order.status || 'PENDING') }}
+          </span>
+        </div>
+      </div>
+
+      <div class="order-items">
+        <div class="order-item" *ngFor="let item of order.items">
+          <div class="item-details">
+            <h4>{{ item.articleName }}</h4>
+            <p class="item-body-part">{{ item.bodyPartName }}</p>
+            <p class="item-state">
+              <span class="state-badge" [ngClass]="getStateClass(item.state)">{{ getStateLabel(item.state) }}</span>
+            </p>
+          </div>
+          <div class="item-price">
+            <span class="price">{{ item.price }} €</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="order-footer">
+        <div class="order-summary">
+          <div class="summary-line">
+            <span>{{ order.itemCount }} article(s)</span>
+            <span class="summary-total">Total : {{ order.totalPrice }} €</span>
+          </div>
+        </div>
+        <div class="order-actions">
+          <button class="btn btn-secondary btn-sm" (click)="viewOrderDetails(order.orderId)">Détails</button>
+          <button class="btn btn-primary btn-sm" (click)="reorderItems(order)">Recommander</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div class="messages">
+    <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+    <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>

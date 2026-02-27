@@ -1,0 +1,112 @@
+﻿<div class="article-detail-container">
+  
+  <div class="loading" *ngIf="loading">
+    <p>Chargement de l'article...</p>
+  </div>
+
+<div class="not-found" *ngIf="!loading && !article">
+    <div class="not-found-card">
+      <h2>Article non trouvé</h2>
+      <p>L'article que vous recherchez n'existe pas ou a été retiré.</p>
+      <button class="btn btn-primary" routerLink="/articles">Retour aux articles</button>
+    </div>
+  </div>
+
+<div class="article-content" *ngIf="!loading && article">
+    
+    <nav class="breadcrumb">
+      <a routerLink="/home">Accueil</a>
+      <span class="separator">›</span>
+      <a routerLink="/articles">Articles</a>
+      <span class="separator">›</span>
+      <span class="current">{{ article.idBodyPart?.nameBodyPart }}</span>
+    </nav>
+
+<div class="article-grid">
+      
+      <div class="article-info">
+        <h1 class="article-title">{{ article.idBodyPart?.nameBodyPart }}</h1>
+
+<div class="article-state">
+          <span class="state-badge" [ngClass]="getStateClass(article.etat)">
+            {{ getStateLabel(article.etat) }}
+          </span>
+        </div>
+
+<div class="article-price">
+          <span class="price">{{ article.prix }} €</span>
+          <span class="price-label">Prix TTC</span>
+        </div>
+
+<div class="article-description" *ngIf="article.description">
+          <h3>Description</h3>
+          <p>{{ article.description }}</p>
+        </div>
+
+<div class="article-specs">
+          <h3>Informations</h3>
+          <div class="spec-list">
+            <div class="spec-item">
+              <span class="spec-label">Partie du corps :</span>
+              <span class="spec-value">{{ article.idBodyPart?.nameBodyPart }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">État :</span>
+              <span class="spec-value">{{ getStateLabel(article.etat) }}</span>
+            </div>
+            <div class="spec-item" *ngIf="article.dateExtraction">
+              <span class="spec-label">Date d'extraction :</span>
+              <span class="spec-value">{{ article.dateExtraction | date:'short' }}</span>
+            </div>
+            <div class="spec-item">
+              <span class="spec-label">ID Article :</span>
+              <span class="spec-value">#{{ article.id }}</span>
+            </div>
+          </div>
+        </div>
+
+<div class="article-actions">
+          
+          <div *ngIf="!isLoggedIn" class="login-warning">
+            <p>Vous devez être connecté pour ajouter au panier</p>
+            <button class="btn btn-secondary btn-block" routerLink="/auth">Se connecter</button>
+          </div>
+
+<div *ngIf="isLoggedIn">
+            <button
+              class="btn btn-primary btn-large btn-block"
+              (click)="addToCart()"
+              [disabled]="addingToCart"
+            >
+              <span *ngIf="!addingToCart">Ajouter au panier</span>
+              <span *ngIf="addingToCart">Ajout en cours...</span>
+            </button>
+            <button class="btn btn-secondary btn-block" routerLink="/cart">Voir mon panier</button>
+          </div>
+        </div>
+
+<div class="messages">
+          <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+          <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+        </div>
+      </div>
+    </div>
+
+<div class="similar-articles" *ngIf="similarArticles.length > 0">
+      <h2>Articles Similaires</h2>
+      <div class="articles-grid">
+        <div
+          class="article-card"
+          *ngFor="let similar of similarArticles"
+          (click)="navigateToArticle(similar.id)"
+        >
+          <div class="card-content">
+            <h3>{{ similar.idBodyPart?.nameBodyPart }}</h3>
+            <p class="card-state">{{ getStateLabel(similar.etat) }}</p>
+            <p class="card-price">{{ similar.prix }} €</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

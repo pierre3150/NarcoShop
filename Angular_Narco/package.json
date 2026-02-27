@@ -1,0 +1,47 @@
+{
+  "name": "narco-frontend",
+  "version": "0.0.0",
+  "scripts": {
+    "ng": "ng",
+    "start": "ng serve",
+    "build": "ng build",
+    "watch": "ng build --watch --configuration development",
+    "test:unit": "jest --config jest.unit.config.js",
+    "test:unit:watch": "jest --config jest.unit.config.js --watch",
+    "e2e": "jest --config jest.e2e.config.js",
+    "e2e:watch": "jest --config jest.e2e.config.js --watch"
+  },
+  "private": true,
+  "dependencies": {
+    "@angular/animations": "^16.2.0",
+    "@angular/common": "^16.2.0",
+    "@angular/compiler": "^16.2.0",
+    "@angular/core": "^16.2.0",
+    "@angular/forms": "^16.2.0",
+    "@angular/platform-browser": "^16.2.0",
+    "@angular/platform-browser-dynamic": "^16.2.0",
+    "@angular/router": "^16.2.0",
+    "crypto-js": "^4.2.0",
+    "rxjs": "~7.8.0",
+    "tslib": "^2.3.0",
+    "zone.js": "~0.13.0"
+  },
+  "devDependencies": {
+    "@angular-devkit/build-angular": "^16.2.0",
+    "@angular/cli": "^16.2.0",
+    "@angular/compiler-cli": "^16.2.0",
+    "@types/crypto-js": "^4.2.2",
+    "@types/jest": "^29.5.0",
+    "@types/node": "^18.19.130",
+    "@types/selenium-webdriver": "^4.35.4",
+    "chromedriver": "^145.0.5",
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
+    "selenium-webdriver": "^4.33.0",
+    "ts-jest": "^29.4.6",
+    "typescript": "~5.1.0"
+  },
+  "overrides": {
+    "@types/node": "^18.19.130"
+  }
+}

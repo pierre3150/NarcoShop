@@ -1,0 +1,112 @@
+﻿<div class="auth-container">
+  
+  <div class="auth-hero">
+    <h1 class="auth-title">Espace Membre Narco Shop</h1>
+    <p class="auth-subtitle">Connectez-vous pour accéder à nos services exclusifs</p>
+  </div>
+
+<div class="auth-forms-wrapper">
+    
+    <div class="auth-form-container" [class.active]="!isRegisterMode">
+      <div class="form-header">
+        <h2>Connexion</h2>
+        <p>Bon retour parmi nous !</p>
+      </div>
+
+      <form class="auth-form" (ngSubmit)="onLogin()" #loginForm="ngForm">
+        <div class="form-group">
+          <label for="loginUsername">Nom d'utilisateur</label>
+          <input type="text" id="loginUsername" name="loginUsername" [(ngModel)]="loginCredentials.username" required placeholder="Entrez votre nom d'utilisateur" class="form-input" />
+        </div>
+
+        <div class="form-group">
+          <label for="loginPassword">Mot de passe</label>
+          <input type="password" id="loginPassword" name="loginPassword" [(ngModel)]="loginCredentials.password" required placeholder="Entrez votre mot de passe" class="form-input" />
+        </div>
+
+        <div class="form-message success" *ngIf="successMessage">{{ successMessage }}</div>
+        <div class="form-message error" *ngIf="errorMessage && !isRegisterMode">{{ errorMessage }}</div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="!loginForm.valid || loading">
+          <span *ngIf="!loading">Se connecter</span>
+          <span *ngIf="loading">Connexion...</span>
+        </button>
+
+        <div class="form-footer">
+          <p>Pas encore de compte ?</p>
+          <button type="button" class="btn-link" (click)="toggleMode()">Créer un compte</button>
+        </div>
+      </form>
+    </div>
+
+<div class="auth-form-container" [class.active]="isRegisterMode">
+      <div class="form-header">
+        <h2>Inscription</h2>
+        <p>Rejoignez notre communauté</p>
+      </div>
+
+      <form class="auth-form" (ngSubmit)="onRegister()" #registerForm="ngForm">
+        <div class="form-group">
+          <label for="registerUsername">Nom d'utilisateur</label>
+          <input type="text" id="registerUsername" name="registerUsername" [(ngModel)]="registerCredentials.username" required minlength="3" placeholder="Choisissez un nom d'utilisateur" class="form-input" />
+          <small class="form-hint">Minimum 3 caractères</small>
+        </div>
+
+        <div class="form-group">
+          <label for="registerPassword">Mot de passe</label>
+          <input type="password" id="registerPassword" name="registerPassword" [(ngModel)]="registerCredentials.password" required minlength="6" placeholder="Créez un mot de passe sécurisé" class="form-input" />
+          <small class="form-hint">Minimum 6 caractères (crypté en SHA-256)</small>
+        </div>
+
+        <div class="form-group">
+          <label for="registerAdresse">Adresse de livraison</label>
+          <textarea id="registerAdresse" name="registerAdresse" [(ngModel)]="registerCredentials.adresse" rows="3" placeholder="Pour la livraison de vos commandes" class="form-input"></textarea>
+          <small class="form-hint">Optionnel mais recommandé pour les livraisons</small>
+        </div>
+
+        <div class="form-message success" *ngIf="successMessage && isRegisterMode">{{ successMessage }}</div>
+        <div class="form-message error" *ngIf="errorMessage && isRegisterMode">{{ errorMessage }}</div>
+
+        <button type="submit" class="btn btn-primary btn-block" [disabled]="!registerForm.valid || loading">
+          <span *ngIf="!loading">Créer mon compte</span>
+          <span *ngIf="loading">Création...</span>
+        </button>
+
+        <div class="form-footer">
+          <p>Déjà un compte ?</p>
+          <button type="button" class="btn-link" (click)="toggleMode()">Se connecter</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+<div class="info-box">
+    <div class="info-item">
+      <div>
+        <strong>Sécurité maximale</strong>
+        <p>Vos mots de passe sont cryptés en SHA-256.</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <div>
+        <strong>Anonymat garanti</strong>
+        <p>Vos données sont stockées de manière sécurisée.</p>
+      </div>
+    </div>
+    <div class="info-item">
+      <div>
+        <strong>Avantages membres</strong>
+        <p>Accès prioritaire aux arrivages et support client 24/7.</p>
+      </div>
+    </div>
+  </div>
+
+<div class="auth-navigation">
+    <button class="btn btn-secondary" routerLink="/home">Retour à l'accueil</button>
+    <button class="btn btn-secondary" routerLink="/policy">Notre politique</button>
+  </div>
+
+<div class="auth-disclaimer">
+    <p><strong>RAPPEL :</strong> Cette page est une démonstration technique. Aucune donnée sensible n'est réellement traitée.</p>
+  </div>
+</div>

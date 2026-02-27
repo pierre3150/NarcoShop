@@ -1,0 +1,91 @@
+﻿<div class="cart-container">
+  
+  <header class="cart-header">
+    <h1>Mon Panier</h1>
+    <p *ngIf="currentUser">Panier de <strong>{{ currentUser.username }}</strong></p>
+  </header>
+
+<div class="login-required" *ngIf="!isLoggedIn">
+    <div class="login-card">
+      <h2>Connexion Requise</h2>
+      <p>Vous devez être connecté pour accéder à votre panier</p>
+      <button class="btn btn-primary" routerLink="/auth">Se connecter</button>
+    </div>
+  </div>
+
+<div class="empty-cart" *ngIf="isLoggedIn && cart && cart.itemCount === 0 && !loading">
+    <div class="empty-card">
+      <h2>Votre panier est vide</h2>
+      <p>Ajoutez des articles pour commencer vos achats !</p>
+      <button class="btn btn-primary" routerLink="/articles">Parcourir les articles</button>
+    </div>
+  </div>
+
+<div class="loading" *ngIf="loading">
+    <p>Chargement de votre panier...</p>
+  </div>
+
+<div class="cart-content" *ngIf="isLoggedIn && cart && cart.itemCount > 0 && !loading">
+    
+    <div class="cart-items">
+      <h2>Articles dans votre panier ({{ cart.itemCount }})</h2>
+
+      <div class="item-card" *ngFor="let item of cart.items">
+        <div class="item-details">
+          <h3>{{ item.articleName }}</h3>
+          <p class="item-body-part"><span class="label">Partie :</span> {{ item.bodyPartName }}</p>
+          <p class="item-state">
+            <span class="label">État :</span>
+            <span class="state-badge" [class.fresh]="item.state === 'FRESH'">{{ getStateLabel(item.state) }}</span>
+          </p>
+          <p class="item-date"><span class="label">Ajouté le :</span> {{ item.dateAjout | date:'short' }}</p>
+        </div>
+
+        <div class="item-price">
+          <span class="price">{{ item.price }} €</span>
+        </div>
+
+        <div class="item-actions">
+          <button class="btn btn-danger btn-sm" (click)="removeItem(item.bodyPartId)">Retirer</button>
+        </div>
+      </div>
+    </div>
+
+<div class="cart-summary">
+      <h2>Résumé de la Commande</h2>
+      <div class="summary-details">
+        <div class="summary-line">
+          <span>Nombre d'articles</span>
+          <span class="value">{{ cart.itemCount }}</span>
+        </div>
+        <div class="summary-line">
+          <span>Sous-total</span>
+          <span class="value">{{ cart.totalPrice }} €</span>
+        </div>
+        <div class="summary-line">
+          <span>Livraison</span>
+          <span class="value free">GRATUIT</span>
+        </div>
+        <div class="summary-divider"></div>
+        <div class="summary-line total">
+          <span>Total</span>
+          <span class="value">{{ cart.totalPrice }} €</span>
+        </div>
+      </div>
+
+      <button class="btn btn-checkout" (click)="checkout()" [disabled]="checkoutLoading">
+        <span *ngIf="!checkoutLoading">Valider la commande</span>
+        <span *ngIf="checkoutLoading">Validation...</span>
+      </button>
+
+      <button class="btn btn-secondary btn-block" routerLink="/articles">Continuer mes achats</button>
+
+      <button class="btn btn-link btn-block" (click)="clearCart()">Vider le panier</button>
+    </div>
+  </div>
+
+<div class="messages">
+    <div class="message success" *ngIf="successMessage">{{ successMessage }}</div>
+    <div class="message error" *ngIf="errorMessage">{{ errorMessage }}</div>
+  </div>
+</div>
