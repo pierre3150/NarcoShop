@@ -4,7 +4,4 @@
   password: string;
   adresse: string;
   role?: string;
-  codeCb: string;
-  ccvCb: string;
-  expiryDate: string;
 }

@@ -51,7 +51,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void getAllArticles_shouldReturnOnlyAvailableArticles() {
+    void articlesDisponibles() {
         Article unavailable = new Article();
         unavailable.setId(2);
         unavailable.setDisponible(false);
@@ -66,7 +66,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void getArticleById_shouldReturnArticle_whenFound() {
+    void articleParId() {
         when(articleRepository.findById(1)).thenReturn(Optional.of(article));
 
         Optional<Article> result = defaultController.getArticleById(1);
@@ -76,7 +76,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void createArticle_shouldSaveAndReturn() {
+    void creerArticle() {
         when(articleRepository.save(any(Article.class))).thenReturn(article);
 
         Article result = defaultController.createArticle(article);
@@ -87,7 +87,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void updateArticle_shouldSetIdAndSave() {
+    void modifierArticle() {
         when(articleRepository.save(any(Article.class))).thenReturn(article);
 
         Article result = defaultController.updateArticle(1, article);
@@ -97,7 +97,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void deleteArticle_shouldCallDeleteById() {
+    void supprimerArticle() {
         doNothing().when(articleRepository).deleteById(1);
 
         defaultController.deleteArticle(1);
@@ -106,7 +106,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void getArticlesByBodyPartId_shouldReturnFilteredArticles() {
+    void articlesParBodyPart() {
         when(articleRepository.findByIdBodyPartId(1)).thenReturn(List.of(article));
 
         List<Article> result = defaultController.getArticlesByBodyPartId(1);
@@ -116,7 +116,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void getAllBodyParts_shouldReturnList() {
+    void listeBodyParts() {
         when(bodyPartRepository.findAll()).thenReturn(List.of(bodyPart));
 
         List<BodyPart> result = defaultController.getAllBodyParts();
@@ -126,7 +126,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void createBodyPart_shouldSaveAndReturn() {
+    void creerBodyPart() {
         when(bodyPartRepository.save(any(BodyPart.class))).thenReturn(bodyPart);
 
         BodyPart result = defaultController.createBodyPart(bodyPart);
@@ -136,7 +136,7 @@ class DefaultControllerTest {
     }
 
     @Test
-    void deleteBodyPart_shouldCallDeleteById() {
+    void supprimerBodyPart() {
         doNothing().when(bodyPartRepository).deleteById(1);
 
         defaultController.deleteBodyPart(1);

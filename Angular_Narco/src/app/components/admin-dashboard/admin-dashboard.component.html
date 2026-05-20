@@ -134,6 +134,9 @@
           <button class="btn btn-sm btn-primary" (click)="viewUserCards(user.id)">Voir les cartes</button>
           <button class="btn btn-sm btn-secondary" (click)="viewUserOrders(user.id)">Commandes</button>
         </div>
+        <div class="user-admin-actions-delete">
+          <button class="btn btn-sm btn-danger" (click)="deleteUser(user.id, user.username)" [disabled]="user.role === 'ADMIN'">Supprimer le compte</button>
+        </div>
       </div>
     </div>
   </div>

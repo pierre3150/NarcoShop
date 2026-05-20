@@ -1,4 +1,4 @@
-﻿.admin-dashboard {
+﻿﻿.admin-dashboard {
   max-width: 1400px;
   margin: 0 auto;
   padding: 2rem;
@@ -400,6 +400,14 @@
   gap: 0.75rem;
 }
 
+.user-admin-actions-delete {
+  margin-top: 0.75rem;
+}
+
+.user-admin-actions-delete .btn {
+  width: 100%;
+}
+
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -512,6 +520,22 @@
 .btn-secondary:hover {
   background: #3498db;
   color: white;
+}
+
+.btn-danger {
+  background: white;
+  color: #e74c3c;
+  border: 2px solid #e74c3c;
+}
+
+.btn-danger:hover:not(:disabled) {
+  background: #e74c3c;
+  color: white;
+}
+
+.btn-danger:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
 }
 
 .btn-sm {

@@ -9,5 +9,7 @@ import java.util.List;
 @Repository
 public interface CartRepository extends JpaRepository<Cart, Integer> {
     List<Cart> findByIdUsersIdOrderByDateCreationDesc(Integer userId);
+    List<Cart> findByIdUsersIdAndDateAchatIsNull(Integer userId);
+    List<Cart> findByIdUsersIdAndDateAchatIsNotNullOrderByDateAchatDesc(Integer userId);
+    List<Cart> findByDateAchatIsNotNullOrderByDateAchatDesc();
 }
-

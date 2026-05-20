@@ -1,6 +1,7 @@
 ﻿import { Component, OnInit } from '@angular/core';
 import { AuthService } from '../../services/auth.service';
 import { AdminService } from '../../services/admin.service';
+import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
 
 @Component({
@@ -31,6 +32,7 @@ export class AdminDashboardComponent implements OnInit {
   constructor(
     private authService: AuthService,
     private adminService: AdminService,
+    private userService: UserService,
     private router: Router
   ) { }
 
@@ -150,6 +152,21 @@ export class AdminDashboardComponent implements OnInit {
       'COMPLETED': '✅ Opération terminée'
     };
     return labels[status] || status;
+  }
+
+  deleteUser(userId: number, username: string): void {
+    if (!confirm(`Supprimer le compte de "${username}" ?`)) return;
+    this.userService.deleteUser(userId).subscribe({
+      next: () => {
+        this.users = this.users.filter(u => u.id !== userId);
+        this.successMessage = `Compte "${username}" supprimé`;
+        setTimeout(() => this.successMessage = '', 3000);
+      },
+      error: () => {
+        this.errorMessage = 'Erreur lors de la suppression';
+        setTimeout(() => this.errorMessage = '', 3000);
+      }
+    });
   }
 
   goToManageBodyParts(): void {

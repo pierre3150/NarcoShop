@@ -1,12 +1,12 @@
-﻿<div class="auth-container">
-  
+﻿﻿<div class="auth-container">
+
   <div class="auth-hero">
     <h1 class="auth-title">Espace Membre Narco Shop</h1>
     <p class="auth-subtitle">Connectez-vous pour accéder à nos services exclusifs</p>
   </div>
 
 <div class="auth-forms-wrapper">
-    
+
     <div class="auth-form-container" [class.active]="!isRegisterMode">
       <div class="form-header">
         <h2>Connexion</h2>
@@ -55,7 +55,7 @@
         <div class="form-group">
           <label for="registerPassword">Mot de passe</label>
           <input type="password" id="registerPassword" name="registerPassword" [(ngModel)]="registerCredentials.password" required minlength="6" placeholder="Créez un mot de passe sécurisé" class="form-input" />
-          <small class="form-hint">Minimum 6 caractères (crypté en SHA-256)</small>
+          <small class="form-hint">Minimum 6 caractères</small>
         </div>
 
         <div class="form-group">
@@ -80,26 +80,7 @@
     </div>
   </div>
 
-<div class="info-box">
-    <div class="info-item">
-      <div>
-        <strong>Sécurité maximale</strong>
-        <p>Vos mots de passe sont cryptés en SHA-256.</p>
-      </div>
-    </div>
-    <div class="info-item">
-      <div>
-        <strong>Anonymat garanti</strong>
-        <p>Vos données sont stockées de manière sécurisée.</p>
-      </div>
-    </div>
-    <div class="info-item">
-      <div>
-        <strong>Avantages membres</strong>
-        <p>Accès prioritaire aux arrivages et support client 24/7.</p>
-      </div>
-    </div>
-  </div>
+
 
 <div class="auth-navigation">
     <button class="btn btn-secondary" routerLink="/home">Retour à l'accueil</button>

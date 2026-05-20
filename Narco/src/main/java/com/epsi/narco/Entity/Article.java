@@ -31,7 +31,7 @@ public class Article {
     private Instant dateExtraction;
 
     @Column(name = "disponible")
-    private Boolean disponible = true; // Par défaut disponible
+    private Boolean disponible = true;
 
     @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "id_body_part", nullable = false)

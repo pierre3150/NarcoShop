@@ -41,7 +41,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void register_shouldCreateUser_whenUsernameNotTaken() {
+    void registerOk() {
         when(userRepository.findByUsername("john")).thenReturn(Optional.empty());
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -55,7 +55,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void register_shouldReturnConflict_whenUsernameAlreadyExists() {
+    void registerUsernameDejaExistant() {
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
 
         Map<String, String> payload = Map.of("username", "john", "password", "pass123", "adresse", "123 rue test");
@@ -66,7 +66,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void login_shouldReturnUser_whenCredentialsAreCorrect() {
+    void loginOk() {
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
 
         Map<String, String> payload = Map.of("username", "john", "password", "pass123");
@@ -78,7 +78,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void login_shouldReturnUnauthorized_whenPasswordIsWrong() {
+    void loginMauvaisMotDePasse() {
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
 
         Map<String, String> payload = Map.of("username", "john", "password", "wrongpass");
@@ -88,7 +88,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void login_shouldReturnUnauthorized_whenUserNotFound() {
+    void loginUserInexistant() {
         when(userRepository.findByUsername("unknown")).thenReturn(Optional.empty());
 
         Map<String, String> payload = Map.of("username", "unknown", "password", "pass123");
@@ -98,7 +98,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void checkUsername_shouldReturnTrue_whenUserExists() {
+    void checkUsernameExiste() {
         when(userRepository.findByUsername("john")).thenReturn(Optional.of(user));
 
         ResponseEntity<?> response = authController.checkUsername("john");
@@ -109,7 +109,7 @@ class AuthControllerTest {
     }
 
     @Test
-    void checkUsername_shouldReturnFalse_whenUserDoesNotExist() {
+    void checkUsernameExistePas() {
         when(userRepository.findByUsername("ghost")).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = authController.checkUsername("ghost");
@@ -119,4 +119,3 @@ class AuthControllerTest {
         assertEquals(false, body.get("exists"));
     }
 }
-

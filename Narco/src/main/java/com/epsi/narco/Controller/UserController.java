@@ -1,31 +1,24 @@
 package com.epsi.narco.Controller;
 
 import com.epsi.narco.Entity.User;
-import com.epsi.narco.Repository.UserRepository;
+import com.epsi.narco.Service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.*;
+import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/api/users")
-@CrossOrigin(origins = "http://localhost:4200", allowedHeaders = "*",
-    methods = {RequestMethod.GET, RequestMethod.POST, RequestMethod.PUT, RequestMethod.DELETE, RequestMethod.OPTIONS},
-    allowCredentials = "true")
 public class UserController {
 
     @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getUserById(@PathVariable Integer id) {
-        Optional<User> userOpt = userRepository.findById(id);
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Utilisateur non trouvé"));
-        }
-        User user = userOpt.get();
+        User user = userService.getById(id);
         return ResponseEntity.ok(Map.of(
             "id", user.getId(),
             "username", user.getUsername(),
@@ -36,32 +29,19 @@ public class UserController {
 
     @GetMapping("/all")
     public ResponseEntity<?> getAllUsers() {
-        List<Map<String, Object>> result = new ArrayList<>();
-        for (User user : userRepository.findAll()) {
-            result.add(Map.of(
+        List<Map<String, Object>> result = userService.getAll().stream()
+            .map(user -> Map.<String, Object>of(
                 "id", user.getId(),
                 "username", user.getUsername(),
                 "adresse", user.getAdresse() != null ? user.getAdresse() : "",
                 "role", user.getRole()
-            ));
-        }
+            )).toList();
         return ResponseEntity.ok(result);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<?> updateUser(@PathVariable Integer id, @RequestBody Map<String, String> updates) {
-        Optional<User> userOpt = userRepository.findById(id);
-        if (userOpt.isEmpty()) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Utilisateur non trouvé"));
-        }
-
-        User user = userOpt.get();
-        if (updates.containsKey("adresse")) user.setAdresse(updates.get("adresse"));
-        if (updates.containsKey("password") && !updates.get("password").isEmpty()) {
-            user.setPassword(updates.get("password"));
-        }
-
-        User saved = userRepository.save(user);
+        User saved = userService.update(id, updates);
         return ResponseEntity.ok(Map.of(
             "id", saved.getId(),
             "username", saved.getUsername(),
@@ -73,10 +53,7 @@ public class UserController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteUser(@PathVariable Integer id) {
-        if (!userRepository.existsById(id)) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body(Map.of("message", "Utilisateur non trouvé"));
-        }
-        userRepository.deleteById(id);
+        userService.delete(id);
         return ResponseEntity.ok(Map.of("message", "Utilisateur supprimé avec succès"));
     }
 }

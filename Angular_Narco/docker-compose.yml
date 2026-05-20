@@ -1,0 +1,65 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: narco-frontend
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - narco-network
+    depends_on:
+      - backend
+    # Pour le développement, décommenter les lignes ci-dessous et commenter les autres
+    # build:
+    #   context: .
+    #   dockerfile: Dockerfile.dev
+    # volumes:
+    #   - .:/app
+    #   - /app/node_modules
+
+  backend:
+    image: narco-backend:latest
+    container_name: narco-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/Narco
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+    networks:
+      - narco-network
+    depends_on:
+      - db
+
+  db:
+    image: postgres:15-alpine
+    container_name: narco-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=Narco
+    volumes:
+      - narco-db-data:/var/lib/postgresql/data
+    networks:
+      - narco-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+networks:
+  narco-network:
+    driver: bridge
+
+volumes:
+  narco-db-data:
+

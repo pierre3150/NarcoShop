@@ -25,8 +25,9 @@ public class Cart {
     @Column(name = "date_achat")
     private Instant dateAchat;
 
+    /** Statut de la commande : PENDING, PREPARING, DELIVERED, COMPLETED */
     @Column(name = "status", length = 50)
-    private String status; // PENDING, PREPARING, DELIVERED, COMPLETED
+    private String status;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "id_users", nullable = false)

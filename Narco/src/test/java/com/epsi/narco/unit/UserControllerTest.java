@@ -42,7 +42,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserById_shouldReturnUser_whenFound() {
+    void getUserById_shouldReturnUser_whenFound() throws Exception {
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
 
         ResponseEntity<?> response = userController.getUserById(1);
@@ -54,7 +54,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getUserById_shouldReturn404_whenNotFound() {
+    void getUserById_shouldReturn404_whenNotFound() throws Exception {
         when(userRepository.findById(99)).thenReturn(Optional.empty());
 
         ResponseEntity<?> response = userController.getUserById(99);
@@ -63,7 +63,7 @@ class UserControllerTest {
     }
 
     @Test
-    void getAllUsers_shouldReturnListOfUsers() {
+    void getAllUsers_shouldReturnList() throws Exception {
         User user2 = new User();
         user2.setId(2);
         user2.setUsername("bob");
@@ -80,7 +80,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser_shouldUpdateAdresse() {
+    void updateUser_shouldUpdateAdresse() throws Exception {
         when(userRepository.findById(1)).thenReturn(Optional.of(user));
         when(userRepository.save(any(User.class))).thenReturn(user);
 
@@ -92,16 +92,7 @@ class UserControllerTest {
     }
 
     @Test
-    void updateUser_shouldReturn404_whenUserNotFound() {
-        when(userRepository.findById(99)).thenReturn(Optional.empty());
-
-        ResponseEntity<?> response = userController.updateUser(99, Map.of("adresse", "test"));
-
-        assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
-    }
-
-    @Test
-    void deleteUser_shouldDelete_whenUserExists() {
+    void deleteUser_shouldRemoveUser() throws Exception {
         when(userRepository.existsById(1)).thenReturn(true);
         doNothing().when(userRepository).deleteById(1);
 

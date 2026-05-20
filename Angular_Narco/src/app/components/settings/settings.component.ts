@@ -15,20 +15,13 @@ export class SettingsComponent implements OnInit {
   isAdmin = false;
   activeTab = 'profile';
 
-  profileData: any = {
-    adresse: '',
-    password: ''
-  };
+  profileData = { adresse: '', password: '' };
   loading = false;
   successMessage = '';
   errorMessage = '';
 
   userCards: PaymentCard[] = [];
-  newCard: PaymentCard = {
-    codeCb: 0,
-    ccv: 0,
-    expiryDate: ''
-  };
+  newCard: PaymentCard = { codeCb: 0, ccv: 0, expiryDate: '' };
   cardNumberFormatted = '';
   ccvFormatted = '';
   showAddCardForm = false;
@@ -37,7 +30,7 @@ export class SettingsComponent implements OnInit {
   cardErrorMessage = '';
 
   allUsers: User[] = [];
-  allUsersCards: Map<number, PaymentCard[]> = new Map();
+  allUsersCards: Record<number, PaymentCard[]> = {};
   adminLoading = false;
 
   constructor(
@@ -45,16 +38,14 @@ export class SettingsComponent implements OnInit {
     private userService: UserService,
     private paymentService: PaymentService,
     private router: Router
-  ) { }
+  ) {}
 
   ngOnInit(): void {
     this.currentUser = this.authService.getCurrentUser();
-
     if (!this.currentUser) {
       this.router.navigate(['/auth']);
       return;
     }
-
     this.isAdmin = this.currentUser.role === 'ADMIN';
     this.loadUserData();
     this.loadUserCards();
@@ -62,23 +53,15 @@ export class SettingsComponent implements OnInit {
 
   loadUserData(): void {
     this.userService.getUserById(this.currentUser.id).subscribe({
-      next: (data) => {
-        this.profileData.adresse = data.adresse || '';
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement:', err);
-      }
+      next: (data) => { this.profileData.adresse = data.adresse || ''; },
+      error: (err) => console.error('Erreur chargement profil:', err)
     });
   }
 
   loadUserCards(): void {
     this.paymentService.getCardsByUserId(this.currentUser.id).subscribe({
-      next: (cards) => {
-        this.userCards = cards;
-      },
-      error: (err) => {
-        console.error('Erreur lors du chargement des cartes:', err);
-      }
+      next: (cards) => { this.userCards = cards; },
+      error: (err) => console.error('Erreur chargement cartes:', err)
     });
   }
 
@@ -87,10 +70,7 @@ export class SettingsComponent implements OnInit {
     this.successMessage = '';
     this.errorMessage = '';
 
-    const updates: any = {
-      adresse: this.profileData.adresse
-    };
-
+    const updates: any = { adresse: this.profileData.adresse };
     if (this.profileData.password) {
       updates.password = this.profileData.password;
     }
@@ -98,9 +78,8 @@ export class SettingsComponent implements OnInit {
     this.userService.updateUser(this.currentUser.id, updates).subscribe({
       next: (response) => {
         this.successMessage = response.message || 'Profil mis à jour !';
-        this.loading = false;
         this.profileData.password = '';
-
+        this.loading = false;
         this.currentUser.adresse = response.adresse;
         localStorage.setItem('currentUser', JSON.stringify(this.currentUser));
       },
@@ -114,52 +93,29 @@ export class SettingsComponent implements OnInit {
   toggleAddCardForm(): void {
     this.showAddCardForm = !this.showAddCardForm;
     if (this.showAddCardForm) {
-      this.newCard = {
-        codeCb: 0,
-        ccv: 0,
-        expiryDate: ''
-      };
+      this.newCard = { codeCb: 0, ccv: 0, expiryDate: '' };
       this.cardNumberFormatted = '';
       this.ccvFormatted = '';
     }
   }
 
-formatCardNumber(event: any): void {
-    let value = event.target.value.replace(/\s/g, ''); // Enlever les espaces
-    value = value.replace(/\D/g, ''); // Garder uniquement les chiffres
-
-    if (value.length > 16) {
-      value = value.substring(0, 16);
-    }
-
-    const formatted = value.match(/.{1,4}/g)?.join(' ') || '';
-    this.cardNumberFormatted = formatted;
-
+  formatCardNumber(event: any): void {
+    let value = event.target.value.replace(/\D/g, '').substring(0, 16);
+    this.cardNumberFormatted = value.match(/.{1,4}/g)?.join(' ') || '';
     this.newCard.codeCb = parseInt(value) || 0;
   }
 
-formatCCV(event: any): void {
-    let value = event.target.value.replace(/\D/g, ''); // Garder uniquement les chiffres
-
-    if (value.length > 3) {
-      value = value.substring(0, 3);
-    }
-
+  formatCCV(event: any): void {
+    const value = event.target.value.replace(/\D/g, '').substring(0, 3);
     this.ccvFormatted = value;
     this.newCard.ccv = parseInt(value) || 0;
   }
 
-formatExpiryDate(event: any): void {
-    let value = event.target.value.replace(/\D/g, ''); // Garder uniquement les chiffres
-
-    if (value.length > 4) {
-      value = value.substring(0, 4);
-    }
-
+  formatExpiryDate(event: any): void {
+    let value = event.target.value.replace(/\D/g, '').substring(0, 4);
     if (value.length >= 2) {
       value = value.substring(0, 2) + '/' + value.substring(2);
     }
-
     this.newCard.expiryDate = value;
   }
 
@@ -168,13 +124,8 @@ formatExpiryDate(event: any): void {
     this.cardSuccessMessage = '';
     this.cardErrorMessage = '';
 
-    const cardData = {
-      ...this.newCard,
-      userId: this.currentUser.id
-    };
-
-    this.paymentService.addCard(cardData).subscribe({
-      next: (response) => {
+    this.paymentService.addCard({ ...this.newCard, userId: this.currentUser.id }).subscribe({
+      next: () => {
         this.cardSuccessMessage = 'Carte ajoutée avec succès !';
         this.cardLoading = false;
         this.showAddCardForm = false;
@@ -188,26 +139,19 @@ formatExpiryDate(event: any): void {
   }
 
   deleteCard(cardId: number | undefined): void {
-    if (!cardId) return;
-
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) {
-      return;
-    }
+    if (!cardId || !confirm('Êtes-vous sûr de vouloir supprimer cette carte ?')) return;
 
     this.paymentService.deleteCard(cardId).subscribe({
       next: () => {
         this.userCards = this.userCards.filter(c => c.id !== cardId);
         this.cardSuccessMessage = 'Carte supprimée avec succès';
       },
-      error: (err) => {
-        this.cardErrorMessage = 'Erreur lors de la suppression';
-      }
+      error: () => { this.cardErrorMessage = 'Erreur lors de la suppression'; }
     });
   }
 
   loadAllUsers(): void {
     if (!this.isAdmin) return;
-
     this.adminLoading = true;
     this.userService.getAllUsers().subscribe({
       next: (users) => {
@@ -216,7 +160,7 @@ formatExpiryDate(event: any): void {
         this.adminLoading = false;
       },
       error: (err) => {
-        console.error('Erreur lors du chargement des utilisateurs:', err);
+        console.error('Erreur chargement utilisateurs:', err);
         this.adminLoading = false;
       }
     });
@@ -225,52 +169,54 @@ formatExpiryDate(event: any): void {
   loadAllUsersCards(): void {
     this.paymentService.getAllCards().subscribe({
       next: (cards) => {
-        this.allUsersCards.clear();
-        cards.forEach(card => {
+        this.allUsersCards = cards.reduce((acc, card) => {
           if (card.userId) {
-            if (!this.allUsersCards.has(card.userId)) {
-              this.allUsersCards.set(card.userId, []);
-            }
-            this.allUsersCards.get(card.userId)?.push(card);
+            acc[card.userId] = [...(acc[card.userId] || []), card];
           }
-        });
+          return acc;
+        }, {} as Record<number, PaymentCard[]>);
       },
-      error: (err) => {
-        console.error('Erreur lors du chargement des cartes:', err);
-      }
+      error: (err) => console.error('Erreur chargement cartes admin:', err)
     });
   }
 
   getUserCards(userId: number | undefined): PaymentCard[] {
-    if (!userId) return [];
-    return this.allUsersCards.get(userId) || [];
+    return userId ? (this.allUsersCards[userId] || []) : [];
   }
 
   deleteUser(userId: number | undefined): void {
-    if (!userId) return;
+    if (!userId || !confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) return;
 
-    if (!confirm('Êtes-vous sûr de vouloir supprimer cet utilisateur ?')) {
+    this.userService.deleteUser(userId).subscribe({
+      next: () => { this.allUsers = this.allUsers.filter(u => u.id !== userId); },
+      error: (err) => alert('Erreur lors de la suppression: ' + (err.error?.message || 'Erreur inconnue'))
+    });
+  }
+
+  deleteMyAccount(): void {
+    if (!confirm('⚠️ Êtes-vous sûr de vouloir supprimer définitivement votre compte ?\n\nCette action est irréversible. Toutes vos données seront supprimées.')) return;
+
+    const confirmation = prompt('Pour confirmer, tapez votre nom d\'utilisateur : "' + this.currentUser.username + '"');
+    if (confirmation !== this.currentUser.username) {
+      alert('Nom d\'utilisateur incorrect. Suppression annulée.');
       return;
     }
 
-    this.userService.deleteUser(userId).subscribe({
+    this.userService.deleteUser(this.currentUser.id).subscribe({
       next: () => {
-        this.allUsers = this.allUsers.filter(u => u.id !== userId);
-        alert('Utilisateur supprimé avec succès');
+        this.authService.logout();
+        this.router.navigate(['/auth']);
       },
-      error: (err) => {
-        alert('Erreur lors de la suppression: ' + (err.error?.message || 'Erreur inconnue'));
-      }
+      error: (err) => alert('Erreur lors de la suppression : ' + (err.error?.message || 'Erreur inconnue'))
     });
   }
 
   maskCardNumber(cardNumber: number): string {
-    const cardStr = cardNumber.toString();
-    if (cardStr.length < 4) return '****';
-    return '**** **** **** ' + cardStr.slice(-4);
+    const s = cardNumber.toString();
+    return s.length < 4 ? '****' : '**** **** **** ' + s.slice(-4);
   }
 
-  maskCCV(ccv: number): string {
+  maskCCV(): string {
     return '***';
   }
 }

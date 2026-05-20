@@ -1,0 +1,82 @@
+version: '3.8'
+
+services:
+  # Frontend Angular
+  frontend:
+    build:
+      context: ./Angular_Narco
+      dockerfile: Dockerfile
+    container_name: narco-frontend
+    ports:
+      - "4200:4200"
+    environment:
+      - NODE_ENV=production
+    networks:
+      - narco-network
+    depends_on:
+      - backend
+
+  # Backend Spring Boot
+  backend:
+    build:
+      context: ./Narco
+      dockerfile: Dockerfile
+    container_name: narco-backend
+    ports:
+      - "8080:8080"
+    environment:
+      - SERVER_PORT=8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://db:5432/Narco
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=postgres
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+    networks:
+      - narco-network
+    depends_on:
+      db:
+        condition: service_healthy
+
+  # Database PostgreSQL
+  db:
+    image: postgres:15-alpine
+    container_name: narco-db
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=Narco
+    volumes:
+      - narco-db-data:/var/lib/postgresql/data
+    networks:
+      - narco-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # PgAdmin - Interface web pour gérer PostgreSQL
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    container_name: narco-pgadmin
+    ports:
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@narco.local
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    networks:
+      - narco-network
+    depends_on:
+      - db
+    volumes:
+      - narco-pgadmin-data:/var/lib/pgadmin
+
+networks:
+  narco-network:
+    driver: bridge
+
+volumes:
+  narco-db-data:
+  narco-pgadmin-data:
+
